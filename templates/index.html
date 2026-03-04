@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎭 re:view · sentiment</title>
+    <!-- Font & Icons (minimal) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0b1120 0%, #1a2639 100%);
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            color: #edf2f7;
+        }
+
+        /* main card — different shape, glassy, floating */
+        .glass-panel {
+            width: 100%;
+            max-width: 560px;
+            background: rgba(18, 28, 46, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 144, 226, 0.25);
+            border-radius: 2.5rem;
+            padding: 2rem 2rem 2.5rem;
+            box-shadow: 0 30px 50px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 180, 255, 0.1) inset;
+            transition: transform 0.2s ease;
+            animation: floatIn 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .glass-panel:hover {
+            box-shadow: 0 35px 55px -18px #1e3a8a40;
+        }
+
+        @keyframes floatIn {
+            0% { opacity: 0; transform: translateY(30px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* decorative header with underline */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.8rem;
+        }
+
+        .brand-icon {
+            background: #2563eb;
+            width: 48px;
+            height: 48px;
+            border-radius: 30% 70% 70% 30% / 30% 55% 45% 70%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            box-shadow: 0 8px 18px #1e3a8a70;
+        }
+
+        .brand-text h1 {
+            font-weight: 600;
+            font-size: 1.9rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #f0f9ff, #bae6fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .brand-text p {
+            font-size: 0.9rem;
+            color: #9ab3d8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .brand-text p i {
+            font-size: 0.7rem;
+            color: #38bdf8;
+        }
+
+        /* input area — pill style, softer */
+        .review-box {
+            margin: 1.8rem 0 1.2rem;
+        }
+
+        .review-box label {
+            display: block;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+            color: #7f8ea3;
+            margin-bottom: 0.8rem;
+        }
+
+        .review-box label i {
+            margin-right: 6px;
+            color: #3b82f6;
+        }
+
+        textarea {
+            width: 100%;
+            background: #111c2e;
+            border: 1.5px solid #253449;
+            border-radius: 28px;
+            padding: 1.2rem 1.8rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            resize: vertical;
+            min-height: 140px;
+            font-family: inherit;
+            transition: all 0.2s;
+            box-shadow: inset 0 5px 8px rgba(0,0,0,0.5);
+        }
+
+        textarea:focus {
+            border-color: #3b82f6;
+            outline: none;
+            background: #0f1a2b;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.3), inset 0 2px 5px #000;
+        }
+
+        textarea::placeholder {
+            color: #40536e;
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        /* action row — different button style */
+        .action {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .example-hint {
+            font-size: 0.85rem;
+            color: #617a9b;
+            background: #1e2a3a;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px dashed #3d5470;
+        }
+
+        .example-hint i {
+            color: #fbbf24;
+        }
+
+        button {
+            background: linear-gradient(145deg, #2563eb, #1d4ed8);
+            border: none;
+            padding: 0.9rem 2.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 18px -8px #0f2b66;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            letter-spacing: 0.3px;
+        }
+
+        button:hover {
+            background: linear-gradient(145deg, #2e6cff, #2563eb);
+            transform: scale(1.02) translateY(-2px);
+            box-shadow: 0 20px 25px -8px #1e3a8a;
+        }
+
+        button i {
+            font-size: 1.2rem;
+        }
+
+        /* result card — elevated, dynamic */
+        .sentiment-result {
+            margin-top: 2.5rem;
+            border-radius: 32px;
+            padding: 1.5rem 1.8rem;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+            animation: resultPop 0.4s ease;
+        }
+
+        @keyframes resultPop {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #9bb5d4;
+            margin-bottom: 15px;
+        }
+
+        .result-header i {
+            font-size: 1.6rem;
+        }
+
+        .prediction {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .confidence {
+            display: inline-block;
+            background: #1e2c42;
+            padding: 0.5rem 1.3rem;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #bfd7f5;
+            border: 1px solid #35557c;
+        }
+
+        .confidence strong {
+            color: white;
+            font-size: 1.4rem;
+            margin-right: 4px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* sentiment colors – fresh & modern */
+        .positive {
+            background: linear-gradient(135deg, #0f3b2c, #1e4d3a);
+            border-left: 8px solid #10b981;
+        }
+        .positive .prediction {
+            color: #6ee7b7;
+        }
+        .positive .result-header i {
+            color: #34d399;
+        }
+
+        .negative {
+            background: linear-gradient(135deg, #4a2222, #5f2f2f);
+            border-left: 8px solid #f43f5e;
+        }
+        .negative .prediction {
+            color: #fda4af;
+        }
+        .negative .result-header i {
+            color: #fb7185;
+        }
+
+        .neutral {
+            background: linear-gradient(135deg, #2a3442, #1f2a38);
+            border-left: 8px solid #94a3b8;
+        }
+        .neutral .prediction {
+            color: #cbd5e1;
+        }
+
+        .error {
+            background: #33221a;
+            border-left: 8px solid #f97316;
+            color: #fed7aa;
+        }
+        .error .result-header i {
+            color: #fb923c;
+        }
+
+        /* micro spacing */
+        .mini-note {
+            margin-top: 1.2rem;
+            font-size: 0.8rem;
+            color: #5b6f8b;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 6px;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #314b6b, transparent);
+            margin: 1.2rem 0 0.5rem;
+        }
+
+        /* responsiveness */
+        @media (max-width: 450px) {
+            .glass-panel { padding: 1.5rem; }
+            .brand-text h1 { font-size: 1.5rem; }
+            .action { flex-direction: column; align-items: stretch; gap: 15px; }
+            button { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-panel">
+        <!-- brand new header section -->
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fas fa-film"></i>
+            </div>
+            <div class="brand-text">
+                <h1>re:view sense</h1>
+                <p><i class="fas fa-sparkles"></i> ai-powered movie mood</p>
+            </div>
+        </div>
+
+        <!-- main form – keeps method POST, but no backend change needed -->
+        <form method="POST">
+            <div class="review-box">
+                <label><i class="fas fa-pen-fancy"></i> your two cents</label>
+                <textarea name="review" placeholder="e.g. Absolutely loved the cinematography, pure masterpiece ...">{{ review or '' }}</textarea>
+            </div>
+
+            <div class="action">
+                <span class="example-hint">
+                    <i class="fas fa-lightbulb"></i> “mind-blowing plot”
+                </span>
+                <button type="submit">
+                    <i class="fas fa-microchip"></i> read sentiment
+                </button>
+            </div>
+        </form>
+
+        <!-- dynamic result block – uses same template vars: prediction, confidence, error -->
+        
+        <!-- example with dummy data to show design (if no prediction) you can remove this block,
+             but it's just for preview – actual backend will replace -->
+        {% if not prediction and not error %}
+        <!-- subtle placeholder / empty state (optional) – can be removed -->
+        <div class="mini-note">
+            <i class="fas fa-arrow-up"></i> enter a review above
+        </div>
+        {% endif %}
+
+        <!-- real prediction output -->
+        {% if prediction %}
+        <div class="sentiment-result 
+            {% if 'Positive' in prediction or 'positive' in prediction %}positive
+            {% elif 'Negative' in prediction or 'negative' in prediction %}negative
+            {% else %}neutral{% endif %}">
+            <div class="result-header">
+                <i class="fas 
+                    {% if 'Positive' in prediction %}fa-face-smile
+                    {% elif 'Negative' in prediction %}fa-face-frown
+                    {% else %}fa-face-meh{% endif %}"></i>
+                <span>sentiment verdict</span>
+            </div>
+            <div class="prediction">
+                {{ prediction }}
+                {% if confidence %}
+                <span class="badge">{{ confidence }}% confidence</span>
+                {% endif %}
+            </div>
+            <!-- extra confidence bar style if you like -->
+            {% if confidence %}
+            <div class="confidence">
+                <i class="fas fa-chart-line"></i> <strong>{{ confidence }}</strong> % model certainty
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="sentiment-result error">
+            <div class="result-header">
+                <i class="fas fa-triangle-exclamation"></i> oops
+            </div>
+            <div class="prediction">
+                {{ error }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- decorative element – makes it feel fresh -->
+        <hr>
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #46658c;">
+            <span><i class="far fa-clock"></i> real‑time ai</span>
+            <span><i class="fas fa-robot"></i> deep learning · v2</span>
+        </div>
+    </div>
+</body>
+</html>
