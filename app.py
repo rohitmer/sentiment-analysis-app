@@ -1,9 +1,13 @@
 from flask import Flask, render_template, request
 import joblib
 import re
-from nltk.corpus import stopwords
+import os
+import nltk
 
-app = Flask(__name__)
+# Tell NLTK where our local data is
+nltk.data.path.append(os.path.join(os.path.dirname(__file__), "nltk_data"))
+
+from nltk.corpus import stopwords
 
 # ===============================
 # LOAD MODEL & VECTORIZER
@@ -68,4 +72,5 @@ def home():
 # ===============================
 
 if __name__ == "__main__":
+
     app.run(host="0.0.0.0", port=5000)
