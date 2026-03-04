@@ -4,7 +4,10 @@ import re
 import os
 import nltk
 
-# Tell NLTK where our local data is
+# ✅ Create Flask app FIRST
+app = Flask(__name__)
+
+# ✅ Tell NLTK where local data is
 nltk.data.path.append(os.path.join(os.path.dirname(__file__), "nltk_data"))
 
 from nltk.corpus import stopwords
@@ -74,3 +77,4 @@ def home():
 if __name__ == "__main__":
 
     app.run(host="0.0.0.0", port=5000)
+
